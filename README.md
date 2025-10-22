@@ -42,14 +42,17 @@ mvn spring-boot:run
 
 1. **Clonar el repositorio**
 ```bash
-cd /home/uko/COLOMBIA/JAVA/2do-Intento-JAVA/javaDos-
+git clone https://github.com/HectorCorbellini/alexia-Render-JAVA.git
+cd alexia-Render-JAVA
 ```
 
-2. **Variables de entorno configuradas automáticamente**
+2. **Configurar variables de entorno**
 ```bash
-# Para desarrollo local: El archivo .env ya está configurado con tus credenciales
-# Para producción en Render: Las variables se configuran automáticamente usando:
-./scripts/sync_env.sh
+# Copiar el template de ejemplo
+cp .env.example .env
+
+# Editar .env con tus credenciales de Supabase
+# Ver deployment/SUPABASE.md para detalles de configuración
 ```
 
 3. **Crear tablas en Supabase**
@@ -89,22 +92,30 @@ mvn spring-boot:run
 http://localhost:8080
 ```
 
-## 🚀 Despliegue en Render
+## 🚀 Despliegue
 
-**Estado**: ✅ Desplegado exitosamente
+Este proyecto puede desplegarse en múltiples plataformas en la nube que soportan contenedores Docker:
 
-Este proyecto está configurado para despliegue automático en Render usando Docker.
+### Render (Actualmente Desplegado)
+
+**Estado**: ✅ Desplegado exitosamente en [https://alexia-telegram-bot.onrender.com](https://alexia-telegram-bot.onrender.com)
+
+### Koyeb (Disponible para Despliegue)
+
+**Estado**: ⏳ No desplegado aún - Ver `deployment/KOYEB.md` para instrucciones detalladas
+
+Ambas plataformas ofrecen tiers gratuitos adecuados para desarrollo y uso en producción a pequeña escala.
 
 ### Características del Despliegue
 
 - ✅ **Multi-stage Docker build** para imágenes optimizadas
 - ✅ **Vaadin production mode** con frontend pre-compilado
-- ✅ **PostgreSQL en Render** (red interna, alta velocidad)
-- ✅ **Variables de entorno** configuradas en Render dashboard
+- ✅ **PostgreSQL compatible** (Supabase, Render PostgreSQL, o cualquier PostgreSQL)
+- ✅ **Variables de entorno** configurables
 - ✅ **Auto-deploy** desde GitHub
 - ✅ **Health checks** automáticos
 
-### Guía Rápida de Despliegue
+### Guía Rápida de Despliegue en Render
 
 1. **Push a GitHub**:
    ```bash
@@ -112,30 +123,19 @@ Este proyecto está configurado para despliegue automático en Render usando Doc
    ```
 
 2. **Crear servicio en Render**:
-   - Dashboard → **New +** → **Web Service**
+   - Dashboard → **New +** → **Web Service
    - Conectar repositorio: `HectorCorbellini/alexia-Render-JAVA`
    - Render detecta automáticamente `Dockerfile` y `render.yaml`
 
 3. **Crear PostgreSQL Database**:
-   - Dashboard → **New +** → **PostgreSQL**
+   - Dashboard → **New +** → **PostgreSQL
    - Región: **Oregon** (misma que web service)
-   - Plan: **Free**
+   - Plan: **Free
 
 4. **Configurar variables de entorno** en Render dashboard:
    ```
    DATABASE_URL=jdbc:postgresql://[host]/[database]
    DATABASE_USER=[user]
-   DATABASE_PASSWORD=[password]
-   TELEGRAM_BOT_TOKEN=[token]
-   TELEGRAM_BOT_USERNAME=[username]
-   GROK_API_KEY=[api_key]
-   ```
-
-5. **Deploy**: Render construye y despliega automáticamente (5-10 minutos)
-
-### Documentación Completa
-
-Ver [deployment/RENDER.md](deployment/RENDER.md) para instrucciones detalladas, troubleshooting y mejores prácticas.
 
 ## 📦 Tecnologías
 
@@ -149,43 +149,25 @@ Ver [deployment/RENDER.md](deployment/RENDER.md) para instrucciones detalladas, 
 
 ## 🎯 Funcionalidades Implementadas
 
-### ✅ Paso 1: Proyecto Base y Dashboard Básico
-- [x] Estructura Maven configurada
-- [x] Dashboard web básico con Vaadin
-- [x] Mensaje de bienvenida inicial
+### ✅ Core & Foundation
+- **Paso 1-3**: Proyecto base, conexión a DB, integración con Telegram y Dashboard profesional.
+- **Paso 4-5**: Dashboard de logs y comandos básicos del bot (`/start`, `/help`, `/status`).
 
-### ✅ Paso 2: Conexión a Supabase
-- [x] Entidad JPA `ConnectionTest`
-- [x] Repositorio Spring Data JPA
-- [x] Servicio de base de datos con DTOs
-- [x] Use Case para desacoplamiento
-- [x] Botón de prueba en dashboard
-- [x] Carga automática de variables `.env`
-- [x] Conexión verificada y funcionando
+### ✅ Inteligencia Artificial & Búsqueda
+- **Paso 6**: Integración con Grok AI para procesamiento de lenguaje natural.
+- **Paso 7**: Búsqueda de negocios por categoría.
+- **Paso 8**: CRUD completo para la entidad `Product`.
+- **Paso 9**: Búsqueda geoespacial con PostGIS para encontrar negocios cercanos.
 
-### ✅ Mejora UI: Dashboard Profesional Completo
-- [x] MainLayout con menú lateral organizado
-- [x] 8 cards de métricas con colores distintivos
-- [x] Estado del sistema con badges visuales
-- [x] 13 vistas placeholder para todas las secciones
-- [x] Navegación fluida entre secciones
-- [x] Diseño profesional con sombras y bordes
-
-### ✅ Paso 3: Integración Básica con Telegram
-- [x] Bot funcional `@ukoquique_bot` con respuestas eco
-- [x] Persistencia automática de mensajes en Supabase
-- [x] Logging completo de actividad del bot
-- [x] Manejo robusto de errores
-- [x] Token verificado y configurado correctamente
+### ✅ Features para Vendedores
+- **Paso 11**: Sistema de captura de leads con consentimiento GDPR/LGPD.
+- **Paso 11.5**: Feature "Encuentra Compradores Cercanos" para identificar clientes potenciales.
+- **Paso 12**: Sistema de gestión de proveedores y comparación de precios.
 
 ### ⏳ Próximos Pasos
-- [ ] Paso 4: Dashboard con logs de Telegram
-- [ ] Paso 5: Comandos básicos del bot (/start, /help, /status)
-- [ ] Paso 6: Búsqueda simple por categoría
-- [ ] Paso 7: CRUD completo de negocios
-- [ ] Paso 8: Integración con IA (Grok)
-- [ ] Paso 9: Búsqueda por ubicación (PostGIS)
-- [ ] Paso 10: Dashboard con métricas avanzadas
+- [ ] **Paso 13**: Estrategia de búsqueda RAG (primero DB interna, luego Google Places).
+- [ ] **Paso 14**: Mensajes interactivos en WhatsApp (botones, listas).
+- [ ] **Paso 15**: Filtro de búsqueda por horario comercial ("abierto ahora").
 
 ## 📝 Estructura del Proyecto
 
@@ -252,7 +234,7 @@ javaDos-/
 
 ```bash
 # Linux/Mac: Usar el script (recomendado)
-# Detiene instancias previas automáticamente, elimina webhook y lanza la aplicación
+# Carga el .env, detiene instancias previas y lanza la aplicación con el perfil 'dev'
 ./scripts/run_linux.sh
 
 # Windows: Usar el script batch (recomendado)
@@ -362,6 +344,28 @@ El proyecto incluye configuración específica para cada entorno:
 ./scripts/delete_webhook.sh
 ```
 
+### Migraciones de Base de Datos
+
+```bash
+# Ejecutar migración de Step 9 (Geolocalización y campos mejorados)
+# Requiere contraseña de Supabase
+./scripts/run_migration_step9.sh
+
+# O con contraseña como variable de entorno
+export SUPABASE_DB_PASSWORD="your_password"
+./scripts/run_migration_step9.sh
+
+# Ejecutar migración directamente con psql
+psql "postgresql://postgres:YOUR_PASSWORD@db.hgcesbylhkjoxtymxysy.supabase.co:5432/postgres" -f database/step9_business_enhancements.sql
+```
+
+**Nota**: El script `run_migration_step9.sh` ejecuta la migración SQL que agrega:
+- PostGIS extension para geolocalización
+- Campos de ubicación geográfica (latitude/longitude)
+- Horarios de negocio (JSONB)
+- Campos adicionales: WhatsApp, Instagram, logo, rating, verificación
+- Índices espaciales para búsquedas por proximidad
+
 ## 🎮 Usar el Bot de Telegram
 
 1. **Abrir Telegram** (móvil o web)
@@ -372,11 +376,29 @@ El proyecto incluye configuración específica para cada entorno:
 
 ## 📚 Documentación
 
+### 🎯 Plan de Desarrollo (IMPORTANTE)
+
+**Guía principal**: [plan/PLAN.md](plan/PLAN.md) - Roadmap simplificado (15 semanas)
+
+Este documento es la **guía definitiva** para el desarrollo de Alexia:
+- ✅ Prioriza features del LOVABLE-PROMPT original
+- ✅ Diseño extensible para features futuras
+- ✅ 6 "Amazement Features" para impresionar sellers
+- ✅ Timeline claro: 15 semanas a producción
+
+**Documentos complementarios**:
+- [plan/FIRST_STEPS_PROMPT.md](plan/FIRST_STEPS_PROMPT.md) - Estrategia de implementación detallada
+- [plan/PLAN_TECHNICAL.md](plan/PLAN_TECHNICAL.md) - Roadmap técnico completo (25 steps)
+- [plan/SELLER_FEATURES.md](plan/SELLER_FEATURES.md) - Casos de uso con ejemplos
+- [plan/PROJECT_ALIGNMENT_ANALYSIS.md](plan/PROJECT_ALIGNMENT_ANALYSIS.md) - Análisis de alineación
+
 ### Documentación del Proyecto
 - [Registro de Cambios](CHANGELOG.md) - Historial completo de desarrollo
-- [Plan de Desarrollo Incremental](PLAN_INCREMENTAL.md) - Roadmap del proyecto
 - [Guía de Despliegue en Render](deployment/RENDER.md) - Instrucciones detalladas
 - [Comparación de Plataformas](deployment/README_DEPLOY.md) - Por qué Render
+- [Estrategia de Base de Datos](deployment/DATABASE_STRATEGY.md) - Dev vs Prod databases
+- [Configuración de Supabase](deployment/SUPABASE.md) - Guía completa de Supabase PostgreSQL
+- [Resumen de Entornos](deployment/ENVIRONMENT_SUMMARY.md) - Referencia rápida
 
 ### Documentación Técnica
 - [Spring Boot Docs](https://spring.io/projects/spring-boot)
@@ -387,14 +409,22 @@ El proyecto incluye configuración específica para cada entorno:
 ## 🐛 Troubleshooting
 
 ### Error de conexión a base de datos
-- **Verificar credenciales**: Asegúrate de que las variables de entorno estén configuradas correctamente en Render
-- **Sincronizar variables**: Ejecuta `./scripts/sync_env.sh` para actualizar las variables en Render
-- **Verificar restricciones de red**: En Supabase, ve a **Settings → Database → Network Restrictions** y asegúrate de que **"Allow all access"** esté activado
+- **Verificar credenciales**: Asegúrate de que las variables de entorno estén configuradas correctamente
+- **Supabase en desarrollo**: Verifica que el JDBC URL incluya `prepareThreshold=0` (ver [SUPABASE.md](deployment/SUPABASE.md))
+- **Render en producción**: Usa la base de datos interna de Render, no Supabase (ver [DATABASE_STRATEGY.md](deployment/DATABASE_STRATEGY.md))
+
+### Error "prepared statement S_1 already exists"
+Este error ocurre con Supabase's connection pooler. **Solución**:
+```bash
+# Agregar prepareThreshold=0 al JDBC URL en tu archivo .env
+SPRING_DATASOURCE_URL=jdbc:postgresql://db.xxx.supabase.co:6543/postgres?sslmode=disable&prepareThreshold=0
+```
+Ver guía completa en [SUPABASE.md](deployment/SUPABASE.md)
 
 ### Error 401 en bot de Telegram
 - El token puede haber expirado o ser inválido
 - Usa @BotFather para obtener un token nuevo
-- Actualiza el token usando `./scripts/sync_env.sh`
+- Actualiza el token en tu archivo `.env` (desarrollo) o Render Dashboard (producción)
 
 ### Error 409: Conflict - Bot de Telegram
 Este error ocurre cuando hay múltiples instancias del bot intentando conectarse simultáneamente.
@@ -404,16 +434,16 @@ Este error ocurre cuando hay múltiples instancias del bot intentando conectarse
 # Detener aplicación local si está corriendo
 pkill -f "spring-boot:run"
 
-# Sincronizar variables (esto reinicia el servicio en Render)
-./scripts/sync_env.sh
-
 # Esperar 30 segundos para que Telegram libere la sesión
 sleep 30
+
+# Reiniciar aplicación
+./scripts/run_linux.sh
 ```
 
 **Prevención**:
-- Siempre usa `./scripts/sync_env.sh` para actualizar la configuración
-- Evita cerrar la aplicación abruptamente
+- Usa `./scripts/stop_linux.sh` para detener la aplicación correctamente
+- Evita cerrar la aplicación abruptamente (Ctrl+C múltiples veces)
 
 ## 🔐 Seguridad y Variables de Entorno
 
@@ -444,13 +474,22 @@ GROK_API_KEY=[api_key]
 
 **Para desarrollo local (archivo `.env`)**:
 ```bash
-SUPABASE_DB_URL=jdbc:postgresql://localhost:5432/alexia
-SUPABASE_DB_USER=postgres
-SUPABASE_DB_PASSWORD=your_password
+# Database (Supabase PostgreSQL)
+SPRING_DATASOURCE_URL=jdbc:postgresql://db.xxx.supabase.co:6543/postgres?sslmode=disable&prepareThreshold=0
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=your_password
+
+# Telegram Bot
 TELEGRAM_BOT_TOKEN=your_token
 TELEGRAM_BOT_USERNAME=your_bot
+
+# Grok AI
 GROK_API_KEY=your_key
+GROK_MODEL=llama-3.1-8b-instant
+GROK_API_URL=https://api.groq.com/openai/v1/chat/completions
 ```
+
+> **Nota**: El parámetro `prepareThreshold=0` es **crítico** para Supabase. Ver [SUPABASE.md](deployment/SUPABASE.md) para detalles.
 
 ## 🧪 Tests Unitarios
 
@@ -693,9 +732,12 @@ mvn clean install -DskipTests
 | 6 | ✅ | 2025-10-16 | Integración con Grok AI (llama-3.1-8b-instant) |
 | 7 | ✅ | 2025-10-16 | Búsqueda de Negocios por Categoría |
 | **Deploy** | ✅ | **2025-10-19** | **Desplegado en Render con PostgreSQL** |
-| 8 | ⏳ | Próximo | Dashboard de conversaciones IA |
-| 9 | ⏳ | Próximo | Integración con OpenAI (opcional) |
-| 10 | ⏳ | Próximo | Dashboard con métricas avanzadas |
+| 8 | ✅ | 2025-10-21 | CRUD de Productos y Búsqueda | 
+| 9 | ✅ | 2025-10-21 | Búsqueda por Geolocalización (PostGIS) | 
+| 11 | ✅ | 2025-10-22 | Sistema de Captura de Leads (GDPR) | 
+| 11.5 | ✅ | 2025-10-22 | Feature: Encuentra Compradores Cercanos | 
+| 12 | ✅ | 2025-10-22 | Feature: Comparación de Precios de Proveedores | 
+| 13 | ⏳ | Próximo | Búsqueda Híbrida (RAG) |
 
 **Progreso actual**: 7 pasos + Deploy = **Aplicación en producción** 🎉
 
@@ -706,7 +748,7 @@ Este proyecto es privado y está en desarrollo activo.
 ---
 
 **Versión**: 1.0.0  
-**Última actualización**: 2025-10-19  
+**Última actualización**: 2025-10-22  
 **Estado**: ✅ Desplegado en Producción (Render)  
 **Repositorio**: [github.com/HectorCorbellini/alexia-Render-JAVA](https://github.com/HectorCorbellini/alexia-Render-JAVA)  
 **Rama**: `main`
