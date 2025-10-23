@@ -4,6 +4,275 @@ Registro de cambios y progreso del desarrollo incremental de Alexia.
 
 ---
 
+## [2025-10-23] - Koyeb Deployment Preparation 🚀
+
+### 🚀 Deployment Readiness
+
+This update prepares the application for deployment on the Koyeb platform, complementing the existing Render deployment.
+
+#### Key Changes & Improvements:
+- ✅ **Koyeb Deployment Guide**: Created a detailed step-by-step guide (`deployment/KOYEB.md`) for deploying the application on Koyeb using Docker and connecting to Supabase.
+- ✅ **Multi-Platform Configuration**: Updated `application-prod.properties` to be platform-agnostic. It now supports environment variables from both Render (`DATABASE_*`) and Koyeb (`SPRING_DATASOURCE_*`), ensuring flexibility.
+- ✅ **Connection Pool Optimization**: Added HikariCP settings to `application-prod.properties` to disable prepared statement caching, resolving known conflicts with the Supabase connection pooler.
+- ✅ **README Update**: The main `README.md` was updated to reflect multi-platform deployment capabilities, now mentioning both Render and Koyeb as supported platforms.
+- ✅ **Dedicated Git Branch**: Created a new `koyeb-deployment` branch and pushed it to the new `ukoquique-proves/javaAlexia-KOYEB` GitHub repository to isolate deployment efforts.
+- ✅ **Code Cleanup**: Removed unused files (`BusinessDistanceDTO.java`, `step13.2_enable_unaccent.sql`, `run_migration_step13.2.sh`) to keep the codebase clean.
+
+#### Outcome:
+The application is now fully configured and documented for deployment on Koyeb. Although the final deployment was paused due to unexpected platform issues, all necessary code, configuration, and documentation are in place for a future attempt.
+
+---
+
+## [2025-10-22] - Retrieval Augmented Generation (RAG) Search Strategy (Step 13) 🔍
+
+### 🔍 Intelligent Business Search with Source Citation
+
+#### New Features
+- ✅ **RAG Search Service**: Created `RagSearchService` to handle combined internal/external business searches
+- ✅ **External Results Cache**: Implemented `ExternalResultCache` entity and repository for caching external search results
+- ✅ **Geospatial Search Methods**: Enhanced `BusinessRepository` with advanced geospatial search capabilities
+- ✅ **Source Citation**: Added proper source citation in bot responses (internal, external, or mixed)
+- ✅ **Caching Mechanism**: Implemented 24-hour TTL caching for external search results
+- ✅ **Database Migration**: Created and executed migration script for external results cache table
+
+#### Technical Improvements
+- ✅ **Search Service**: Enhanced `SearchService` with internal database search and external source fallback logic
+- ✅ **Telegram Bot Integration**: Updated `AlexiaTelegramBot` to use `RagSearchService` for business searches
+- ✅ **Configuration**: Modified `TelegramBotConfig` to inject `RagSearchService`
+- ✅ **Query Normalization**: Added accent, case, and pluralization handling for better search matching
+- ✅ **Fallback Logic**: Implemented intelligent fallback from internal to external search when results < 3
+
+#### Data
+- ✅ **Test Businesses**: Added sample bakeries to database for testing RAG search functionality
+- ✅ **Cache Management**: Added cleanup methods for expired cache entries
+
+#### Bot Commands
+- ✅ **Enhanced Search**: Bot now performs intelligent searches with source citation
+- ✅ **Error Handling**: Improved error messages and fallback responses
+
+---
+
+## [2025-10-21] - Find Suppliers & Compare Prices (Step 12) 🚚
+
+### 🚚 Supplier Management
+
+#### New Features
+- ✅ **Supplier Entity**: Created `Supplier.java` to store supplier information.
+- ✅ **Supplier Repository & Service**: Implemented `SupplierRepository` and `SupplierService` for database operations.
+- ✅ **Database Migration**: Created and executed `step12_suppliers_table.sql` to add the `suppliers` table.
+- ✅ **Suppliers UI**: Added a new `SuppliersView` to the main dashboard for managing suppliers.
+
+#### Technical Improvements
+- ✅ Integrated the new view into the `MainLayout` for seamless navigation.
+
+---
+
+## [2025-10-21] - Find Buyers Nearby Feature (Step 11.5) 🌍
+
+### 🌍 Geolocation Search
+
+#### New Features
+- ✅ **GeolocationService**: New service for handling location-based searches
+- ✅ **Business Categories Array**: Added categories field to Business entity for better matching
+- ✅ **Telegram Commands**: New commands `/cerca` (find nearby businesses) and `/categorias` (list categories)
+- ✅ **Enhanced Telegram Bot Help**: Updated help with geolocation commands
+- ✅ **Database Migration**: Script to add categories column to businesses table
+
+#### Technical Improvements
+- ✅ Extended Business entity with categories array
+- ✅ Updated Telegram bot to include GeolocationService
+- ✅ Enhanced BusinessService with category management methods
+
+#### Data
+- ✅ Pre-populated businesses with relevant categories for matching
+- ✅ Created indexes for better search performance
+
+---
+
+## [2025-10-21] - Sistema de Captura de Leads (Step 11) 🎯
+
+### 📋 Lead Capture System
+
+- ✅ **Lead Entity**: Entidad completa con todos los campos requeridos
+  - Información de contacto (nombre, teléfono, email, ciudad, país)
+  - Gestión de estado (new, contacted, qualified, converted, lost, archived)
+  - Fuente multi-canal (telegram, whatsapp, web, organic, data_alexia)
+  - **Consentimiento GDPR/LGPD** (consent_given, consent_date)
+  - Campos preparados para CRM (crm_sync_status, crm_contact_id, crm_opportunity_id)
+  - Helper methods (getFullName(), hasContactMethod(), isActive())
+
+- ✅ **LeadRepository**: 20+ métodos de consulta especializados
+  - Búsqueda por negocio, estado, fuente, user_wa_id
+  - Filtros por nombre, email, teléfono
+  - Consultas por rango de fechas
+  - Filtros de leads activos/nuevos/convertidos
+  - Consultas para sincronización CRM
+  - Métodos de conteo para analytics
+
+- ✅ **LeadService**: Servicio completo con lógica de negocio
+  - Creación de leads con validación completa (usa LeadValidator)
+  - Actualización de leads y estados
+  - Gestión de consentimiento GDPR/LGPD
+  - Todos los métodos de consulta del repositorio
+  - Soft delete (archivo) y hard delete
+
+- ✅ **LeadValidator**: Validación completa integrada
+  - Validación de nombres (solo letras, 2-100 caracteres)
+  - Validación de contacto (al menos un método requerido)
+  - **Validación de consentimiento** (crítico para GDPR/LGPD)
+  - Validación de fuente y estado
+  - Validación de user_wa_id (Telegram/WhatsApp ID)
+
+### 🗄️ Base de Datos
+
+- ✅ **Migración Step 11**: Tabla leads creada exitosamente
+  - Schema completo con todos los campos
+  - 6 índices para optimización de rendimiento
+  - 4 constraints de validación (contact_method, status, source, consent_date)
+  - 5 registros de prueba insertados
+  - Comentarios de documentación en columnas
+
+### 🎨 Dashboard - LeadsView
+
+- ✅ **Vista de Gestión de Leads** (316 líneas)
+  - Grid con todas las columnas relevantes
+  - Búsqueda por nombre, email, teléfono
+  - Filtros por estado (6 opciones)
+  - Filtros por fuente (5 opciones)
+  - Badges con colores para estado y consentimiento
+  - Diálogo de detalles completos del lead
+  - Diálogo de edición de estado y notas
+  - Formato de fechas localizado (dd/MM/yyyy HH:mm)
+  - Traducción de estados y fuentes al español
+
+### 📊 Estadísticas
+
+- **Archivos creados**: 4 (Lead.java, LeadRepository.java, LeadService.java, LeadsView.java)
+- **Líneas de código**: ~950 líneas
+- **Métodos de consulta**: 20+ en repository
+- **Métodos de servicio**: 15+ en service
+- **Compilación**: ✅ 63 archivos compilados exitosamente
+
+### 🔐 GDPR/LGPD Compliance
+
+- ✅ Campo `consent_given` obligatorio
+- ✅ Campo `consent_date` con constraint de validación
+- ✅ Validación de consentimiento en LeadValidator
+- ✅ Badge visual de consentimiento en UI
+- ✅ Registro de fecha de consentimiento automático
+
+### 🚀 Preparado para Futuro
+
+- ✅ Campos CRM listos para integración
+- ✅ Campo `campaign_id` para futuras campañas
+- ✅ Multi-canal: Telegram, WhatsApp, Web, Orgánico
+- ✅ Sistema de estados completo para ciclo de vida del lead
+
+---
+
+## [2025-10-20] - Geolocalización, Validación Avanzada y Tests Completos 🌍
+
+### 🌍 Geolocalización y Campos Mejorados de Negocios (Paso 9)
+
+- ✅ **PostGIS Habilitado**: Extensión PostgreSQL para consultas geoespaciales instalada y configurada.
+- ✅ **Campos de Ubicación**: Agregado campo `location` (GEOGRAPHY) para almacenar coordenadas latitude/longitude.
+- ✅ **Horarios de Negocio**: Campo `business_hours` (JSONB) para horarios flexibles por día de la semana.
+- ✅ **Redes Sociales**: Campos `whatsapp` e `instagram` para contacto directo.
+- ✅ **Sistema de Calificación**: Campo `rating` (DECIMAL 3,2) para valoraciones 0.00-5.00.
+- ✅ **Verificación de Negocios**: Campo `is_verified` (BOOLEAN) para indicar negocios verificados por admin.
+- ✅ **Preparado para Futuro**: Campos `google_place_id` (importación de Google Places) y `owner_user_id` (RBAC).
+- ✅ **Índices Espaciales**: Índices GIST para búsquedas geográficas eficientes.
+- ✅ **Queries de Proximidad**: Métodos en `BusinessRepository` para buscar negocios dentro de un radio:
+  - `findNearby()` - Negocios cercanos a coordenadas
+  - `findVerifiedNearby()` - Solo negocios verificados cercanos
+  - `findByCategoryNearby()` - Categoría + proximidad combinados
+- ✅ **Script de Migración**: `run_migration_step9.sh` para ejecutar migración en Supabase.
+- ✅ **Datos de Prueba**: Negocios existentes actualizados con coordenadas de Bogotá y horarios de ejemplo.
+
+### 🧪 Tests Completos para Geolocalización
+
+- ✅ **BusinessServiceTest Creado**: Suite de 9 tests unitarios para validar funcionalidad de Step 9.
+- ✅ **Tests de Proximidad**: Verificación de búsquedas geográficas con mocks.
+- ✅ **Tests de Campos Nuevos**: Validación de location, business_hours, rating, is_verified.
+- ✅ **Tests de Horarios**: Verificación de estructura JSONB de horarios de negocio.
+- ✅ **100% Aprobados**: Todos los tests pasan exitosamente (9/9).
+
+### 🛡️ Capa de Validación Avanzada (Enhancement Layer)
+
+- ✅ **ProductValidator**: Validación completa de productos con reglas de negocio:
+  - Validación de nombre (3-255 caracteres)
+  - Validación de precio (no negativo, límite máximo)
+  - Validación de stock (no negativo, máx 1M unidades)
+  - Validación de URLs de imágenes (http/https, máx 10 imágenes)
+  - Validación de variantes (máx 50 tipos)
+  - Validación de referencia a negocio
+- ✅ **BusinessValidator**: Validación completa de negocios:
+  - Validación de nombre (3-255 caracteres)
+  - Validación de teléfono/WhatsApp (formato internacional)
+  - Validación de Instagram (formato @username)
+  - Validación de rating (0.00-5.00, 2 decimales)
+  - Validación de horarios de negocio (días válidos)
+  - Validación de ubicación (formato WKT, rangos de coordenadas)
+  - Validación de email (para futuro uso)
+- ✅ **LeadValidator**: Preparado para Step 11 (Lead Capture):
+  - Validación de nombres (solo letras, 2-100 caracteres)
+  - Validación de contacto (teléfono o email requerido)
+  - **Validación de consentimiento** (GDPR/LGPD compliance)
+  - Validación de fuente (telegram, whatsapp, web, organic)
+  - Validación de ID de usuario (numérico)
+  - Validación de estado (new, contacted, qualified, etc.)
+- ✅ **Integración en Servicios**: Validadores integrados en `ProductService` y `BusinessService`
+- ✅ **Manejo de Errores en UI**: Try-catch blocks en vistas Vaadin con notificaciones claras
+- ✅ **PostGIS Fix**: Solucionado problema de inserción con `@ColumnTransformer` para campos GEOGRAPHY
+
+### 🔧 Mejoras de Calidad de Código
+
+- ✅ **Excepciones Personalizadas**: Implementadas `ProductNotFoundException`, `BusinessNotFoundException`, `InvalidProductDataException`.
+- ✅ **GlobalExceptionHandler Mejorado**: Manejo centralizado de excepciones con respuestas HTTP apropiadas (404, 400).
+- ✅ **Mejor Logging**: Mensajes de error específicos con contexto completo.
+- ✅ **Código Más Limpio**: Reemplazadas excepciones genéricas `RuntimeException` por excepciones de dominio.
+- ✅ **Calidad Mejorada**: Score de calidad de código aumentado de 9/10 a 9.5/10.
+
+### 📚 Documentación Actualizada
+
+- ✅ **README.md**: Sección de migraciones de base de datos agregada con ejemplos.
+- ✅ **STEP9_SUMMARY.md**: Documentación completa de implementación archivada.
+- ✅ **TO_IMPROVE.md**: Archivo actualizado y archivado tras completar mejoras.
+- ✅ **Scripts Seguros**: Python script con API key comentada y agregada a `.gitignore`.
+
+### 🛍️ Catálogo Universal de Productos (Paso 8)
+
+- ✅ **Entidad `Product` Robusta**: Creada con soporte para `JSONB` para variantes y metadata, y `TEXT[]` para múltiples imágenes.
+- ✅ **UI de Productos Completa**: `ProductsView` implementada con funcionalidad CRUD (Crear, Leer, Editar, Eliminar).
+- ✅ **Búsqueda y Filtrado**: La UI permite buscar productos por nombre y filtrar por negocio.
+- ✅ **Formulario Detallado**: Diálogo modal para crear y editar productos con todos sus campos, incluyendo precio, stock y variantes.
+- ✅ **Integración con Telegram**: El bot ahora puede buscar productos en el catálogo.
+
+### 🏪 Interfaz de Gestión de Negocios (Paso 7)
+
+- ✅ **UI de Negocios Completa**: Reemplazado el placeholder de `BusinessesView` con una interfaz CRUD completa.
+- ✅ **Gestión Centralizada**: Permite crear, editar y eliminar (soft delete) negocios desde el dashboard.
+- ✅ **Búsqueda Integrada**: Funcionalidad para buscar negocios por nombre o categoría.
+
+### 🧠 Bot de Telegram con Comprensión de Lenguaje Natural (NLU)
+
+- ✅ **Detección de Intenciones**: El bot ya no depende de comandos rígidos. Ahora usa Grok AI para clasificar la intención del usuario (`PRODUCT_SEARCH`, `BUSINESS_SEARCH`, `GENERAL_QUERY`).
+- ✅ **Extracción de Entidades**: Extrae automáticamente el término de búsqueda del mensaje (p. ej., "café" de "quiero encontrar cafe").
+- ✅ **Experiencia de Usuario Mejorada**: Permite conversaciones fluidas y naturales, respondiendo a las búsquedas de manera inteligente.
+
+### 🐛 Corrección de Errores Críticos
+
+- ✅ **Compatibilidad con Hibernate 6+**: Solucionado el problema de mapeo de `JSONB` reemplazando librerías externas (`hibernate-types`) por la anotación nativa `@JdbcTypeCode(SqlTypes.JSON)`.
+- ✅ **Solución de `LazyInitializationException`**: Corregido el error interno en la vista de productos cambiando el `FetchType` de la relación `Product.business` a `EAGER`, asegurando que los datos siempre se carguen.
+
+### 📊 Impacto y Resultado
+
+- **Funcionalidad Core Completa**: Los módulos de gestión de Negocios y Productos están 100% operativos.
+- **Interacción Inteligente**: El bot de Telegram es ahora significativamente más inteligente y fácil de usar.
+- **Estabilidad Mejorada**: La aplicación es más robusta tras resolver errores complejos de persistencia y dependencias.
+
+---
+
 ## [2025-10-19] - Despliegue Exitoso en Render ✅
 
 ### 🚀 Aplicación en Producción
@@ -34,7 +303,7 @@ Registro de cambios y progreso del desarrollo incremental de Alexia.
 #### Archivos Creados
 - `deployment/RENDER.md` - Guía completa de despliegue
 - `deployment/README_DEPLOY.md` - Comparación de plataformas
-- `deployment/render.env` - Template de variables
+- `deployment/RENDER_VARIABLES_TEMPLATE.env` - Template de variables (solo referencia)
 
 #### Archivos Eliminados
 - `render/` - Carpeta con documentación obsoleta
